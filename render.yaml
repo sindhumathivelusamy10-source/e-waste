@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: e-waste
+    env: python
+    buildCommand: pip install -r requirement.txt
+    startCommand: gunicorn app:app

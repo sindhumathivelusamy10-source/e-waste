@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Records</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family: Arial;
+
+    /* 🌈 Gradient Background */
+    background: linear-gradient(135deg, #4facfe, #8e44ad);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+/* 📦 Main Box */
+.container{
+    background:white;
+    padding:30px;
+    border-radius:12px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.2);
+    text-align:center;
+    width:600px;
+}
+
+/* 🏷 Title */
+h2{
+    margin-bottom:20px;
+}
+
+/* 📊 Table */
+table{
+    width:100%;
+    border-collapse: collapse;
+}
+
+th, td{
+    padding:10px;
+    border-bottom:1px solid #ddd;
+}
+
+th{
+    background:#4facfe;
+    color:white;
+}
+
+/* 🔘 Buttons */
+a{
+    text-decoration:none;
+    margin:0 5px;
+    padding:5px 10px;
+    border-radius:5px;
+    font-size:14px;
+}
+
+.edit{
+    background:#4CAF50;
+    color:white;
+}
+
+.delete{
+    background:#e74c3c;
+    color:white;
+}
+
+/* 🔙 Back */
+.back{
+    display:inline-block;
+    margin-top:20px;
+    padding:10px 15px;
+    background:#8e44ad;
+    color:white;
+    border-radius:8px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>📄 Records</h2>
+
+<table>
+<tr>
+<th>Name</th>
+<th>Item</th>
+<th>Qty</th>
+<th>Action</th>
+</tr>
+
+{% for row in data %}
+<tr>
+<td>{{row[1]}}</td>
+<td>{{row[2]}}</td>
+<td>{{row[3]}}</td>
+<td>
+<a class="edit" href="/edit/{{row[0]}}">Edit</a>
+<a class="delete" href="/delete/{{row[0]}}">Delete</a>
+</td>
+</tr>
+{% endfor %}
+
+</table>
+
+<a class="back" href="/dashboard">⬅ Back</a>
+
+</div>
+
+</body>
+</html>

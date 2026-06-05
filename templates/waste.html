@@ -1,0 +1,22 @@
+<h2>Waste Records</h2>
+
+<table border="1">
+<tr>
+<th>Name</th>
+<th>Item</th>
+<th>Quantity</th>
+<th>Action</th>
+</tr>
+
+{% for d in data %}
+<tr>
+<td>{{d[1]}}</td>
+<td>{{d[2]}}</td>
+<td>{{d[3]}}</td>
+<td>
+<a href="/edit/{{d[0]}}">Edit</a> |
+<a href="/delete/{{d[0]}}">Delete</a>
+</td>
+</tr>
+{% endfor %}
+</table>

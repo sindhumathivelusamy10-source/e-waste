@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - Smart E-Waste</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f4f6fb;
+        }
+
+        /* Main Container */
+        .container {
+            width: 900px;
+            height: 500px;
+            display: flex;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        /* LEFT SIDE (Brand Section) */
+        .left {
+            width: 50%;
+            background: linear-gradient(135deg, #00c9a7, #4facfe);
+            color: white;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .left h1 {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .left p {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .feature {
+            margin: 8px 0;
+            font-size: 14px;
+        }
+
+        /* RIGHT SIDE (Login Form) */
+        .right {
+            width: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-box {
+            width: 80%;
+        }
+
+        .login-box h2 {
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .login-box p {
+            font-size: 13px;
+            color: gray;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            outline: none;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-color: #4facfe;
+            box-shadow: 0 0 5px rgba(79,172,254,0.3);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #00c9a7, #4facfe);
+            color: white;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .extra {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        .extra a {
+            text-decoration: none;
+            color: #4facfe;
+        }
+
+        .extra input {
+            width: auto;
+            margin-right: 5px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- LEFT SIDE -->
+    <div class="left">
+        <h1>♻ Smart E-Waste</h1>
+        <p>Manage and recycle e-waste smartly with technology.</p>
+
+        <div class="feature">✔ Find Nearby E-Waste Centers</div>
+        <div class="feature">✔ Track Waste Records</div>
+        <div class="feature">✔ Eco-Friendly Disposal</div>
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="right">
+        <div class="login-box">
+
+            <h2>Welcome Back</h2>
+            <p>Please login to continue</p>
+
+            <form method="post">
+                <input type="text" name="username" placeholder="Username" required>
+                <input type="password" name="password" placeholder="Password" required>
+
+                <button type="submit">Login</button>
+
+                <div class="extra">
+                    <label><input type="checkbox"> Remember</label>
+                    <a href="#">Forgot Password?</a>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

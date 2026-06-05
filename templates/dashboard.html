@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart E-Waste Dashboard</title>
+    
+    <!-- Google Fonts: Outfit for a modern, sleek tech aesthetic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* 🎨 Color Palette */
+            --bg-gradient: linear-gradient(135deg, #0f172a, #1e1b4b, #311042);
+            --dashboard-bg: rgba(255, 255, 255, 0.05);
+            --dashboard-border: rgba(255, 255, 255, 0.08);
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --text-white: #ffffff;
+            
+            --input-bg: #f8fafc;
+            --input-border: #e2e8f0;
+            --input-focus: #8b5cf6;
+            --input-focus-shadow: rgba(139, 92, 246, 0.15);
+            
+            --btn-gradient: linear-gradient(135deg, #6366f1, #8b5cf6, #d946ef);
+            --btn-gradient-hover: linear-gradient(135deg, #4f46e5, #7c3aed, #c084fc);
+            --btn-shadow: 0 4px 14px rgba(139, 92, 246, 0.35);
+            
+            --action-bg: #f1f5f9;
+            --action-hover-bg: #e2e8f0;
+            
+            /* 📐 Transitions */
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--bg-gradient);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* ✨ Animated background glow circles */
+        .bg-glow-1, .bg-glow-2 {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .bg-glow-1 {
+            background: #8b5cf6;
+            top: 10%;
+            left: 15%;
+            animation: float-slow 15s infinite alternate;
+        }
+        .bg-glow-2 {
+            background: #ec4899;
+            bottom: 10%;
+            right: 15%;
+            animation: float-slow 20s infinite alternate-reverse;
+        }
+
+        @keyframes float-slow {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(40px, 30px) scale(1.1); }
+        }
+
+        /* 📦 Main Dashboard Wrapper */
+        .dashboard-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 1080px;
+            background: var(--dashboard-bg);
+            border: 1px solid var(--dashboard-border);
+            border-radius: 24px;
+            padding: 32px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 🏷 Header */
+        .dashboard-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+
+        .dashboard-header svg {
+            width: 36px;
+            height: 36px;
+            filter: drop-shadow(0 2px 8px rgba(34, 197, 94, 0.4));
+            animation: rotate-eco 20s linear infinite;
+        }
+
+        @keyframes rotate-eco {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .dashboard-header h1 {
+            color: var(--text-white);
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #ffffff 60%, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* 📊 Layout Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 24px;
+        }
+
+        /* Left side stack */
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Right side stack */
+        .right-column {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 📦 Premium Card Base */
+        .card {
+            background: var(--card-bg);
+            border-radius: 18px;
+            padding: 28px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.15);
+            transition: var(--transition-smooth);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.25);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title svg {
+            width: 20px;
+            height: 20px;
+            color: #8b5cf6;
+        }
+
+        /* ✏ Form & Inputs */
+        .input-group {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .input-group svg {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            color: var(--text-muted);
+            pointer-events: none;
+            transition: var(--transition-smooth);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px 14px 14px 44px;
+            border-radius: 12px;
+            border: 1px solid var(--input-border);
+            background: var(--input-bg);
+            color: var(--text-main);
+            font-size: 0.95rem;
+            font-weight: 400;
+            outline: none;
+            transition: var(--transition-smooth);
+        }
+
+        .input-group input::placeholder {
+            color: #94a3b8;
+            font-weight: 400;
+        }
+
+        .input-group input:focus {
+            border-color: var(--input-focus);
+            background: #ffffff;
+            box-shadow: 0 0 0 4px var(--input-focus-shadow);
+        }
+
+        .input-group input:focus + svg {
+            color: var(--input-focus);
+        }
+
+        /* 🔘 Buttons */
+        button {
+            width: 100%;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 12px;
+            background: var(--btn-gradient);
+            color: var(--text-white);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: var(--btn-shadow);
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+
+        button:hover::after {
+            left: 100%;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+            opacity: 0.95;
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button svg {
+            width: 18px;
+            height: 18px;
+            stroke-width: 2.5;
+        }
+
+        /* 🔗 Links & Quick Actions */
+        .quick-actions-card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .action-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: 5px;
+            flex-grow: 1;
+            justify-content: flex-start;
+        }
+
+        .action-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 20px;
+            border-radius: 14px;
+            background: var(--action-bg);
+            text-decoration: none;
+            color: var(--text-main);
+            font-weight: 500;
+            transition: var(--transition-smooth);
+            border: 1px solid transparent;
+        }
+
+        .action-item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .action-item-left svg {
+            width: 20px;
+            height: 20px;
+            color: #6366f1;
+            transition: var(--transition-smooth);
+        }
+
+        .action-arrow svg {
+            width: 16px;
+            height: 16px;
+            color: var(--text-muted);
+            transform: translateX(0);
+            transition: var(--transition-smooth);
+        }
+
+        .action-item:hover {
+            background: #ffffff;
+            border-color: rgba(99, 102, 241, 0.2);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.08);
+            transform: translateX(4px);
+        }
+
+        .action-item:hover .action-item-left svg {
+            color: #8b5cf6;
+            transform: scale(1.1);
+        }
+
+        .action-item:hover .action-arrow svg {
+            color: #8b5cf6;
+            transform: translateX(4px);
+        }
+
+        /* E-Waste Stats Indicator for presentation value */
+        .eco-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .stat-box {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-val {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #10b981;
+        }
+
+        .stat-lbl {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        /* 📍 Map Box adjustments */
+        .map-box button {
+            background: linear-gradient(135deg, #10b981, #059669);
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+        }
+        .map-box button:hover {
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
+        }
+
+        /* 📱 Responsive Media Queries */
+        @media (max-width: 820px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .dashboard-container {
+                padding: 24px;
+                margin: 10px;
+            }
+            .dashboard-header h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            .dashboard-container {
+                padding: 18px 14px;
+                border-radius: 18px;
+            }
+            .card {
+                padding: 20px 16px;
+            }
+            .dashboard-header h1 {
+                font-size: 1.5rem;
+            }
+            .dashboard-header svg {
+                width: 28px;
+                height: 28px;
+            }
+            .eco-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Glow background objects for high aesthetic value -->
+    <div class="bg-glow-1"></div>
+    <div class="bg-glow-2"></div>
+
+    <div class="dashboard-container">
+        
+        <!-- 🏷 Header -->
+        <header class="dashboard-header">
+            <!-- Green Triangular Recycling Icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+            </svg>
+            <h1>Smart E-Waste Dashboard</h1>
+        </header>
+
+        <!-- 📊 Layout Grid -->
+        <div class="dashboard-grid">
+            
+            <div class="left-column">
+                <!-- 📦 FORM CARD -->
+                <div class="card">
+                    <h2 class="card-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                        Add E-Waste
+                    </h2>
+                    
+                    <form method="post">
+                        <!-- Name Input -->
+                        <div class="input-group">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                            <input type="text" name="name" placeholder="Your Name" required>
+                        </div>
+                        
+                        <!-- Item Type Input -->
+                        <div class="input-group">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                                <line x1="8" y1="21" x2="16" y2="21"/>
+                                <line x1="12" y1="17" x2="12" y2="21"/>
+                            </svg>
+                            <input type="text" name="item" placeholder="Item (mobile/laptop/battery)" required>
+                        </div>
+                        
+                        <!-- Quantity Input -->
+                        <div class="input-group">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="9" y1="3" x2="9" y2="21"/>
+                                <line x1="15" y1="3" x2="15" y2="21"/>
+                                <line x1="3" y1="9" x2="21" y2="9"/>
+                                <line x1="3" y1="15" x2="21" y2="15"/>
+                            </svg>
+                            <input type="number" name="qty" placeholder="Quantity" min="1" required>
+                        </div>
+                        
+                        <button type="submit">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            Add Waste
+                        </button>
+                    </form>
+                </div>
+
+                <!-- 📍 MAP SEARCH CARD -->
+                <div class="card map-box">
+                    <h2 class="card-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                            <circle cx="12" cy="10" r="3"/>
+                        </svg>
+                        Find E-Waste Center
+                    </h2>
+                    <div class="input-group">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"/>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
+                        <input id="itemInput" placeholder="Enter item (mobile/laptop)">
+                    </div>
+                    <button onclick="goMap()">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="3 11 22 2 13 21 11 13 3 11"/>
+                        </svg>
+                        View Map
+                    </button>
+                </div>
+            </div>
+
+            <div class="right-column">
+                <!-- 📊 LINKS CARD -->
+                <div class="card quick-actions-card">
+                    <h2 class="card-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                        </svg>
+                        Quick Actions
+                    </h2>
+                    
+                    <div class="action-list">
+                        <a href="/records" class="action-item">
+                            <div class="action-item-left">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                    <line x1="16" y1="13" x2="8" y2="13"/>
+                                    <line x1="16" y1="17" x2="8" y2="17"/>
+                                    <polyline points="10 9 9 9 8 9"/>
+                                </svg>
+                                <span>View Records</span>
+                            </div>
+                            <div class="action-arrow">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="9 18 15 12 9 6"/>
+                                </svg>
+                            </div>
+                        </a>
+                        
+                        <a href="/graph" class="action-item">
+                            <div class="action-item-left">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 3v18h18"/>
+                                    <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
+                                </svg>
+                                <span>View Analytics Graph</span>
+                            </div>
+                            <div class="action-arrow">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="9 18 15 12 9 6"/>
+                                </svg>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Recycled E-Waste Presentation Stats (Simulated tracker stats) -->
+                    <div class="eco-stats">
+                        <div class="stat-box">
+                            <div class="stat-val">1,482 kg</div>
+                            <div class="stat-lbl">Recycled So Far</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-val">98.4%</div>
+                            <div class="stat-lbl">CO₂ Offset Rate</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function goMap(){
+            const item = document.getElementById("itemInput").value.trim();
+
+            if(item === ""){
+                alert("Please enter an item to search first (e.g., laptop)");
+                return;
+            }
+
+            window.location.href = "/map?item=" + encodeURIComponent(item);
+        }
+    </script>
+</body>
+</html>

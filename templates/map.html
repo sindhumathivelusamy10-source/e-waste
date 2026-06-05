@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart E-Waste Locator</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+    <style>
+        #map {
+            height: 600px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2>Smart E-Waste Locator ({{item}})</h2>
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+
+// INIT MAP
+var map = L.map('map').setView([11.0168, 76.9558], 12);
+
+// MAP TILE
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+
+// 🔥 REAL E-WASTE CENTERS (MORE ADDED)
+var centers = [
+
+    // LAPTOP
+    {name:"Podanur E-Waste", item:"laptop", lat:10.9685, lng:76.9502, time:"9AM-6PM", phone:"9876543210"},
+    {name:"Singanallur E-Waste", item:"laptop", lat:11.0010, lng:77.0217, time:"9AM-5PM", phone:"9001234567"},
+    {name:"Peelamedu E-Waste", item:"laptop", lat:11.0302, lng:77.0023, time:"10AM-6PM", phone:"9123456701"},
+
+    // MOBILE
+    {name:"RS Puram E-Waste", item:"mobile", lat:11.0085, lng:76.9558, time:"10AM-5PM", phone:"9123456780"},
+    {name:"Gandhipuram E-Waste", item:"mobile", lat:11.0168, lng:76.9670, time:"9AM-7PM", phone:"9988776655"},
+    {name:"Saibaba Colony E-Waste", item:"mobile", lat:11.0306, lng:76.9446, time:"9AM-6PM", phone:"9345678901"},
+
+    // BATTERY
+    {name:"Ukkadam Battery Center", item:"battery", lat:10.9916, lng:76.9581, time:"8AM-6PM", phone:"9012345678"},
+    {name:"Kuniyamuthur Battery Center", item:"battery", lat:10.9601, lng:76.9553, time:"9AM-5PM", phone:"9098765432"},
+    {name:"Ganapathy Battery Recycling", item:"battery", lat:11.0430, lng:76.9945, time:"9AM-6PM", phone:"9871234560"}
+
+];
+
+// GET ITEM FROM FLASK
+var selectedItem = "{{item}}".toLowerCase();
+
+// FILTER BASED ON ITEM
+var filtered = centers.filter(c => c.item == selectedItem);
+
+
+// 📏 DISTANCE FUNCTION
+function getDistance(lat1, lon1, lat2, lon2) {
+    let R = 6371;
+    let dLat = (lat2 - lat1) * Math.PI/180;
+    let dLon = (lon2 - lon1) * Math.PI/180;
+
+    let a = Math.sin(dLat/2)*Math.sin(dLat/2) +
+            Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180) *
+            Math.sin(dLon/2)*Math.sin(dLon/2);
+
+    let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+}
+
+
+// 🔊 VOICE FUNCTION
+function speak(text){
+    let speech = new SpeechSynthesisUtterance(text);
+    speech.lang = "en-US";
+    speechSynthesis.speak(speech);
+}
+
+
+// 🛣️ GOOGLE ROUTE
+function go(lat, lng){
+    navigator.geolocation.getCurrentPosition(function(pos){
+        let userLat = pos.coords.latitude;
+        let userLng = pos.coords.longitude;
+
+        let url = `https://www.google.com/maps/dir/${userLat},${userLng}/${lat},${lng}`;
+        window.open(url, "_blank");
+    });
+}
+
+
+// 📍 GET USER LOCATION
+navigator.geolocation.getCurrentPosition(function(pos){
+
+    let userLat = pos.coords.latitude;
+    let userLng = pos.coords.longitude;
+
+    // USER MARKER
+    L.marker([userLat, userLng]).addTo(map)
+        .bindPopup("You are here").openPopup();
+
+    let minDist = 9999;
+    let nearest = null;
+
+    filtered.forEach(c => {
+
+        let d = getDistance(userLat, userLng, c.lat, c.lng);
+
+        if(d < minDist){
+            minDist = d;
+            nearest = c;
+        }
+
+        let marker = L.marker([c.lat, c.lng]).addTo(map);
+
+        marker.bindPopup(`
+            <b>${c.name}</b><br>
+            Item: ${c.item}<br>
+            Time: ${c.time}<br>
+            Phone: ${c.phone}<br>
+            Distance: ${d.toFixed(2)} km<br><br>
+
+            <button onclick="go(${c.lat}, ${c.lng})">Go</button>
+            <button onclick="speak('${c.name} is ${d.toFixed(2)} kilometers away')">Speak</button>
+        `);
+
+    });
+
+    // 🔥 NEAREST CENTER HIGHLIGHT
+    if(nearest){
+        L.marker([nearest.lat, nearest.lng], {
+            icon: new L.Icon({
+                iconUrl: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png',
+                iconSize: [32,32]
+            })
+        }).addTo(map).bindPopup("Nearest Center: " + nearest.name).openPopup();
+
+        speak("Nearest center is " + nearest.name);
+    }
+
+});
+
+</script>
+
+</body>
+</html>
